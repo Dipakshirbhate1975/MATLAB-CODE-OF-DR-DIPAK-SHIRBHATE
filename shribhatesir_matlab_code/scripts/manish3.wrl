@@ -1,0 +1,652 @@
+#VRML V2.0 utf8
+
+#Created with V-Realm Builder v2.0
+#Integrated Data Systems Inc.
+#www.ids-net.com
+
+
+WorldInfo {
+	info	[ "This Web3D Content was created with Vivaty Studio  a Web3D authoring tool",
+			  "www.mediamachines.com" ]
+	title	"sss"
+}
+DEF Import_DeskLamp_wrl0 Group {
+	children [ 
+	    NavigationInfo {
+		    headlight	TRUE
+		    speed	1
+		    type	[ "EXAMINE",
+				      "ANY" ]
+		    visibilityLimit	0
+	    }
+
+	    Viewpoint {
+		    fieldOfView	0.785
+		    jump	TRUE
+		    position	0 0.1 1
+		    description	"DeskLamp"
+	    }
+
+	    Group {
+		    children [ 
+			DEF movelamp PlaneSensor {
+			}
+
+			DEF lamp Transform {
+				translation	0 0 0
+				children [ 
+				    Shape {
+					    appearance	Appearance {
+						    material	DEF color Material {
+							    ambientIntensity	0.2
+							    diffuseColor	0.8 0 0.6
+						    }
+
+					    }
+
+					    geometry	Cylinder {
+						    height	0.01
+						    radius	0.1
+					    }
+
+				    }
+
+				    Group {
+					    children [ 
+						DEF movefirstarm SphereSensor {
+						}
+
+						DEF firstarm Transform {
+							translation	0 0.15 0
+							rotation	-1 0 0  0.7
+							center	0 -0.15 0
+							children [ 
+							    DEF lamparm Shape {
+								    appearance	Appearance {
+									    material	USE color 
+								    }
+
+								    geometry	Cylinder {
+									    height	0.3
+									    radius	0.01
+								    }
+
+							    }
+
+							    Group {
+								    children [ 
+									DEF movesecondarm SphereSensor {
+									}
+
+									DEF secondarm Transform {
+										translation	0 0.3 0
+										rotation	1 0 0  1.9
+										center	0 -0.15 0
+										children [ 
+										    USE lamparm 
+										    Group {
+											    children [ 
+												DEF movelampshade SphereSensor {
+												}
+
+												DEF lampshade Transform {
+													translation	0 0.075 0
+													rotation	-1 0 0  1.25
+													center	0 0.075 0
+													children [ 
+													    Shape {
+														    appearance	Appearance {
+															    material	USE color 
+														    }
+
+														    geometry	Cone {
+															    bottomRadius	0.12
+															    height	0.15
+															    bottom	FALSE
+														    }
+
+													    }
+
+													    Transform {
+														    translation	0 -0.05 0
+														    children [ 
+															Shape {
+																appearance	Appearance {
+																	material	DEF color2 Material {
+																		ambientIntensity	0.2
+																		diffuseColor	0.4 0.4 0.4
+																		emissiveColor	0 0 0
+																	}
+
+																}
+
+																geometry	Sphere {
+																	radius	0.05
+																}
+
+															}
+
+															DEF clock1 TimeSensor {
+																cycleInterval	0.5
+																loop	FALSE
+																startTime	-1
+															}
+
+															DEF colorpath1 ColorInterpolator {
+																key	[ 0, 1 ]
+																keyValue	[ 0.4 0.4 0.4,
+																		  1 1 0 ]
+															}
+
+															DEF colorpath2 ColorInterpolator {
+																key	[ 0, 1 ]
+																keyValue	[ 1 1 0,
+																		  0.4 0.4 0.4 ]
+															}
+
+															DEF clock2 TimeSensor {
+																cycleInterval	0.5
+																loop	FALSE
+																startTime	-1
+															}
+
+															DEF dad_light Transform {
+																rotation	-1 0 0  0.96
+																children DEF light SpotLight {
+																	ambientIntensity	0.8
+																	attenuation	1 0 0
+																	beamWidth	0.393
+																	color	1 1 0
+																	cutOffAngle	0.785
+																	intensity	1
+																	location	0 0 0
+																	on	FALSE
+																	radius	20
+																}
+															}
+														    ]
+													    }
+													]
+												}
+											    ]
+										    }
+										]
+									}
+								    ]
+							    }
+							]
+						}
+					    ]
+				    }
+
+				    DEF button1 Transform {
+					    translation	-0.02 0.015 0.05
+					    children DEF button1group Group {
+						    children [ 
+							Shape {
+								appearance	Appearance {
+									material	DEF material0 Material {
+										ambientIntensity	0.2
+										diffuseColor	1 0 0
+									}
+
+								}
+
+								geometry	Cylinder {
+									height	0.03
+									radius	0.01
+								}
+
+							}
+
+							DEF touch1 TouchSensor {
+							}
+
+							DEF code1 Script {
+								url	"javascript:
+function set_light() {
+ value = true;
+}
+
+            
+"
+								eventOut  SFBool value
+								eventIn  SFTime set_light
+							}
+						    ]
+					    }
+				    }
+
+				    DEF button2 Transform {
+					    translation	0.02 0.015 0.05
+					    children DEF button2group Group {
+						    children [ 
+							Shape {
+								appearance	Appearance {
+									material	DEF material1 Material {
+										ambientIntensity	0.2
+										diffuseColor	0 0 1
+									}
+
+								}
+
+								geometry	Cylinder {
+									height	0.03
+									radius	0.01
+								}
+
+							}
+
+							DEF touch2 TouchSensor {
+							}
+
+							DEF code2 Script {
+								url	"javascript:
+function set_light() {
+ value = false;
+}
+
+            
+"
+								eventOut  SFBool value
+								eventIn  SFTime set_light
+							}
+						    ]
+					    }
+				    }
+				]
+			}
+		    ]
+	    }
+	]
+}
+DEF dad_Import_DeskLamp_wrl Transform {
+	translation	0.26795 0 -0.00674
+	children [ 
+	    NavigationInfo {
+		    headlight	TRUE
+		    speed	1
+		    type	[ "EXAMINE",
+				      "ANY" ]
+		    visibilityLimit	0
+	    }
+
+	    Viewpoint {
+		    fieldOfView	0.785
+		    jump	TRUE
+		    position	0 0.1 1
+		    description	"DeskLamp"
+	    }
+
+	    Group {
+		    children [ 
+			DEF movelamp0 PlaneSensor {
+			}
+
+			DEF lamp0 Transform {
+				translation	0 0 0
+				children [ 
+				    Group {
+					    children [ 
+						DEF movefirstarm0 SphereSensor {
+						}
+
+						DEF firstarm0 Transform {
+							translation	0 0.15 0
+							rotation	-1 0 0  0.7
+							center	0 -0.15 0
+							children Group {
+								children [ 
+								    DEF movesecondarm0 SphereSensor {
+								    }
+
+								    DEF secondarm0 Transform {
+									    translation	0 0.3 0
+									    rotation	1 0 0  1.9
+									    center	0 -0.15 0
+									    children Group {
+										    children [ 
+											DEF movelampshade0 SphereSensor {
+											}
+
+											DEF lampshade0 Transform {
+												translation	0 0.075 0
+												rotation	-1 0 0  1.25
+												center	0 0.075 0
+												children Transform {
+													translation	0 -0.05 0
+													children [ 
+													    Shape {
+														    appearance	Appearance {
+															    material	USE color2 
+														    }
+
+														    geometry	Sphere {
+															    radius	0.02
+														    }
+
+													    }
+
+													    DEF clock3 TimeSensor {
+														    cycleInterval	0.5
+														    loop	FALSE
+														    startTime	-1
+													    }
+
+													    DEF colorpath3 ColorInterpolator {
+														    key	[ 0, 1 ]
+														    keyValue	[ 0.4 0.4 0.4,
+																      1 1 0 ]
+													    }
+
+													    DEF colorpath4 ColorInterpolator {
+														    key	[ 0, 1 ]
+														    keyValue	[ 1 1 0,
+																      0.4 0.4 0.4 ]
+													    }
+
+													    DEF clock4 TimeSensor {
+														    cycleInterval	0.5
+														    loop	FALSE
+														    startTime	-1
+													    }
+
+													    DEF dad_light0 Transform {
+														    rotation	-1 0 0  0.96
+														    children DEF light0 SpotLight {
+															    ambientIntensity	0.8
+															    attenuation	1 0 0
+															    beamWidth	0.393
+															    color	1 1 0
+															    cutOffAngle	0.785
+															    intensity	1
+															    location	0 0 0
+															    on	FALSE
+															    radius	20
+														    }
+													    }
+													]
+												}
+											}
+										    ]
+									    }
+								    }
+								]
+							}
+						}
+					    ]
+				    }
+
+				    DEF button3 Transform {
+					    translation	-0.02 0.015 0.05
+					    children DEF button1group0 Group {
+						    children [ 
+							DEF touch3 TouchSensor {
+							}
+
+							DEF code3 Script {
+								url	"javascript:
+function set_light() {
+ value = true;
+}
+
+            
+"
+								eventOut  SFBool value
+								eventIn  SFTime set_light
+							}
+						    ]
+					    }
+				    }
+
+				    DEF button4 Transform {
+					    translation	0.02 0.015 0.05
+					    children DEF button2group0 Group {
+						    children [ 
+							Shape {
+								appearance	Appearance {
+									material	USE material1 
+								}
+
+								geometry	NULL
+							}
+
+							DEF touch4 TouchSensor {
+							}
+
+							DEF code4 Script {
+								url	"javascript:
+function set_light() {
+ value = false;
+}
+
+            
+"
+								eventOut  SFBool value
+								eventIn  SFTime set_light
+							}
+						    ]
+					    }
+				    }
+				]
+			}
+
+			DEF lamp1 Transform {
+				translation	0.0014 0.12734 0
+				children Group {
+					children [ 
+					    DEF movefirstarm1 SphereSensor {
+					    }
+
+					    DEF firstarm1 Transform {
+						    translation	0 0.15 0
+						    rotation	-1 0 0  0.7
+						    center	0 -0.15 0
+						    children Group {
+							    children [ 
+								DEF movesecondarm1 SphereSensor {
+								}
+
+								DEF secondarm1 Transform {
+									translation	0 0.3 0
+									rotation	1 0 0  1.9
+									center	0 -0.15 0
+									children Group {
+										children [ 
+										    DEF movelampshade1 SphereSensor {
+										    }
+
+										    DEF lampshade1 Transform {
+											    translation	0 0.075 0
+											    rotation	-1 0 0  1.25
+											    center	0 0.075 0
+											    children Transform {
+												    translation	-0.00235564 -0.123778 -6.04205e-008
+												    children [ 
+													Shape {
+														appearance	Appearance {
+															material	USE color2 
+														}
+
+														geometry	Sphere {
+															radius	0.02
+														}
+
+													}
+
+													DEF clock5 TimeSensor {
+														cycleInterval	0.5
+														loop	FALSE
+														startTime	-1
+													}
+
+													DEF colorpath5 ColorInterpolator {
+														key	[ 0, 1 ]
+														keyValue	[ 0.4 0.4 0.4,
+																  1 1 0 ]
+													}
+
+													DEF colorpath6 ColorInterpolator {
+														key	[ 0, 1 ]
+														keyValue	[ 1 1 0,
+																  0.4 0.4 0.4 ]
+													}
+
+													DEF clock6 TimeSensor {
+														cycleInterval	0.5
+														loop	FALSE
+														startTime	-1
+													}
+
+													DEF dad_light1 Transform {
+														rotation	-1 0 0  0.96
+														children DEF light1 SpotLight {
+															ambientIntensity	0.8
+															attenuation	1 0 0
+															beamWidth	0.393
+															color	1 1 0
+															cutOffAngle	0.785
+															intensity	1
+															location	0 0 0
+															on	FALSE
+															radius	20
+														}
+													}
+												    ]
+											    }
+										    }
+										]
+									}
+								}
+							    ]
+						    }
+					    }
+					]
+				}
+			}
+
+			DEF lamp2 Transform {
+				translation	0.0042 0.25748 0
+				children Group {
+					children [ 
+					    DEF movefirstarm2 SphereSensor {
+					    }
+
+					    DEF firstarm2 Transform {
+						    translation	0 0.15 0
+						    rotation	-1 0 0  0.7
+						    center	0 -0.15 0
+						    children Group {
+							    children [ 
+								DEF movesecondarm2 SphereSensor {
+								}
+
+								DEF secondarm2 Transform {
+									translation	0 0.3 0
+									rotation	1 0 0  1.9
+									center	0 -0.15 0
+									children Group {
+										children [ 
+										    DEF movelampshade2 SphereSensor {
+										    }
+
+										    DEF lampshade2 Transform {
+											    translation	0 0.075 0
+											    rotation	-1 0 0  1.25
+											    center	0 0.075 0
+											    children Transform {
+												    translation	0.0385473 -0.160433 -0.147873
+												    children [ 
+													Shape {
+														appearance	Appearance {
+															material	USE color2 
+														}
+
+														geometry	Sphere {
+															radius	0.02
+														}
+
+													}
+
+													DEF clock7 TimeSensor {
+														cycleInterval	0.5
+														loop	FALSE
+														startTime	-1
+													}
+
+													DEF colorpath7 ColorInterpolator {
+														key	[ 0, 1 ]
+														keyValue	[ 0.4 0.4 0.4,
+																  1 1 0 ]
+													}
+
+													DEF colorpath8 ColorInterpolator {
+														key	[ 0, 1 ]
+														keyValue	[ 1 1 0,
+																  0.4 0.4 0.4 ]
+													}
+
+													DEF clock8 TimeSensor {
+														cycleInterval	0.5
+														loop	FALSE
+														startTime	-1
+													}
+
+													DEF dad_light2 Transform {
+														rotation	-1 0 0  0.96
+														children DEF light2 SpotLight {
+															ambientIntensity	0.8
+															attenuation	1 0 0
+															beamWidth	0.393
+															color	1 1 0
+															cutOffAngle	0.785
+															intensity	1
+															location	0 0 0
+															on	FALSE
+															radius	20
+														}
+													}
+												    ]
+											    }
+										    }
+										]
+									}
+								}
+							    ]
+						    }
+					    }
+					]
+				}
+			}
+		    ]
+	    }
+	]
+}
+ROUTE touch1.touchTime TO clock1.startTime
+ROUTE touch2.touchTime TO clock2.startTime
+ROUTE touch3.touchTime TO clock3.startTime
+ROUTE touch4.touchTime TO clock4.startTime
+ROUTE movelamp.translation_changed TO lamp.set_translation
+ROUTE movefirstarm.rotation_changed TO firstarm.set_rotation
+ROUTE movesecondarm.rotation_changed TO secondarm.set_rotation
+ROUTE movelampshade.rotation_changed TO lampshade.set_rotation
+ROUTE clock1.fraction_changed TO colorpath1.set_fraction
+ROUTE colorpath1.value_changed TO color2.set_emissiveColor
+ROUTE clock2.fraction_changed TO colorpath2.set_fraction
+ROUTE colorpath2.value_changed TO color2.set_emissiveColor
+ROUTE touch1.touchTime TO code1.set_light
+ROUTE code1.value TO light.set_on
+ROUTE touch2.touchTime TO code2.set_light
+ROUTE code2.value TO light.set_on
+ROUTE movelamp0.translation_changed TO lamp0.set_translation
+ROUTE movefirstarm0.rotation_changed TO firstarm0.set_rotation
+ROUTE movesecondarm0.rotation_changed TO secondarm0.set_rotation
+ROUTE movelampshade0.rotation_changed TO lampshade0.set_rotation
+ROUTE clock3.fraction_changed TO colorpath3.set_fraction
+ROUTE colorpath3.value_changed TO color2.set_emissiveColor
+ROUTE clock4.fraction_changed TO colorpath4.set_fraction
+ROUTE colorpath4.value_changed TO color2.set_emissiveColor
+ROUTE touch3.touchTime TO code3.set_light
+ROUTE code3.value TO light0.set_on
+ROUTE touch4.touchTime TO code4.set_light
+ROUTE code4.value TO light0.set_on

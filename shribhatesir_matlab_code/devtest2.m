@@ -1,0 +1,529 @@
+function devtest2() 
+
+% 80 80 99 nor
+
+% 72 81 95 left
+% 91 80 95 right
+
+% 81 89 96 up
+% 83 71 94 down
+clc
+global s1 ;
+global q ;
+global co ;
+global allrec;
+global cnt1;
+global myw;
+global fa;
+
+global KEY_IS_PRESSED
+KEY_IS_PRESSED = 0;
+
+%--------------------------------------------------------------
+myw = vrworld('DeskLamp2.wrl');
+open(myw)
+f = vrfigure(myw);
+set(f,'Name','lamp on hand')
+x = nodes(myw, '-full');
+
+c2=vrnode(myw,'color2');
+lightv=vrnode(myw,'light');
+
+
+
+fa=vrnode(myw,'firstarm');
+% fields(fa)
+sa=vrnode(myw,'secondarm');
+% fields(sa)
+ls=vrnode(myw,'lampshade');
+% fields(ls)
+
+%--------------------------------------------------------------
+
+hFig = figure('Toolbar','none','Menubar', 'none',...
+    'Name','device test ','Resize','off','CloseRequestFcn',{@my_closereq},...
+    'Position',[300 100 600 400],'Color',[0.5 0.5 0.5]);
+axis off; 
+
+
+gcf
+set(gcf, 'KeyPressFcn', @myKeyPressFcn)
+
+lable_left  = uicontrol('Style','Text','FontSize',18,'String','  ',...
+          'Units','normalized','Position',[0.1  0.5 0.12 0.17],'Background',[0 0.0 0.0],'ForegroundColor',[0 0 0]);  
+
+lable_right  = uicontrol('Style','Text','FontSize',18,'String','  ',...
+          'Units','normalized','Position',[0.35 0.5 0.12 0.17],'Background',[0 0.0 0.0],'ForegroundColor',[0 0 0]);  
+
+lable_up  = uicontrol('Style','Text','FontSize',18,'String','  ',...
+          'Units','normalized','Position',[0.23 0.7 0.12 0.17],'Background',[0 0.0 0.0],'ForegroundColor',[0 0 0]);  
+
+lable_down  = uicontrol('Style','Text','FontSize',18,'String','  ',...
+          'Units','normalized','Position',[0.23 0.3 0.12 0.17],'Background',[0 0.0 0.0],'ForegroundColor',[0 0 0]);  
+                  
+lable_sw1  = uicontrol('Style','Text','FontSize',18,'String','  ',...
+          'Units','normalized','Position',[0.7 0.85 0.05 0.04],'Background',[0 0.0 0.0],'ForegroundColor',[0 0 0]);  
+                  
+lable_sw2  = uicontrol('Style','Text','FontSize',18,'String','  ',...
+          'Units','normalized','Position',[0.8 0.85 0.05 0.04],'Background',[0 0.0 0.0],'ForegroundColor',[0 0 0]);  
+      
+lable_sw3  = uicontrol('Style','Text','FontSize',18,'String','  ',...
+          'Units','normalized','Position',[0.9 0.85 0.05 0.04],'Background',[0 0.0 0.0],'ForegroundColor',[0 0 0]);  
+
+ q = getAvailableComPort();
+ co = 0;
+ allrec = ' ';
+ cnt1  = 0;
+ comlistpop  =      uicontrol('Style', 'popup','String', q,...
+           'Units','normalized','Position',[0.8 0.6 0.15 0.04],...
+           'Callback', @comlist);       % Popup function handle callback
+       
+  button1 = uicontrol('String','conn','Callback', {@button1_callback},'FontSize',14,...
+                'Units','normalized','Position',[0.8 0.5 0.15 0.06],'Background',[0.8 0.8 0.8],'ForegroundColor',[0 0 0] );
+
+
+%%  my_closereq
+    function comlist(hObject,eventdata)
+        
+        val = get(hObject,'Value');
+
+          s1 = serial( q{val} ,'BaudRate',9600,'DataBits',8,'FlowControl','none','Terminator','CR', 'InputBufferSize', 100)
+          s1.BytesAvailableFcnMode = 'byte';
+          s1.BytesAvailableFcnCount = 1; 
+%           s1.BytesAvailableFcn = @instrcallback;
+
+    end
+
+%%
+% function instrcallback(hObject,eventdata)
+% 
+%    cnt1 = cnt1 + 1 
+%    qq = fread(s1, s1.BytesAvailable) ;
+%  allrec = [allrec char(qq)]
+%  if qq == 13 
+%      cnt1 = 0
+%      allrec ='';
+%  end
+%  
+  
+% end
+%%  button1_callback
+    function button1_callback(hObject,eventdata)
+        
+        if (co==0)
+         fopen(s1);
+         co = 1;
+         set(button1,'string','dis');
+        else 
+         fclose(s1);
+         co = 0;
+         set(button1,'string','conn');
+        end 
+        
+    end
+
+
+
+
+%     format shortG
+    i = 0
+    sa1=[0  0];    sa2=[0  0];     sa3=[0  0];
+     flage1 = 0;     selflage1 = 0;
+    xlcnt1 = 0.1;  xlcnt2 = 0.1;
+    ylcnt1 = 0.1;  ylcnt2 = 0.1;
+    x1r=0; y1r =0 ; z1r = 0;
+    x2r=0; y2r =0 ; z2r = 0;
+    x3r=0; y3r =0 ; z3r = 0;
+    xl = 0 ; yl = 0;
+    
+    while ~KEY_IS_PRESSED
+     
+    if co==1    
+
+    tline = fgets(s1);
+    if length(tline) > 31
+      
+    
+      pt1 = strfind(tline,':1');    pt2 = strfind(tline,':2');
+      alls1=str2num(tline(pt1(1)+2:pt2(1)-1));
+
+      pt1 = strfind(tline,':2');    pt2 = strfind(tline,':3');
+      alls2=str2num(tline(pt1(1)+2:pt2(1)-1));
+      
+      pt1 = strfind(tline,':3');    pt2 = strfind(tline,':4');
+      alls3=str2num(tline(pt1(1)+2:pt2(1)-1));
+        
+      pt1 = strfind(tline,':4');    pt2 = strfind(tline,':5');
+      
+      ss1 = str2num(tline(pt1(1)+2:pt2(1)-3));
+      ss2 = str2num(tline(pt1(1)+3:pt2(1)-2));
+      ss3 = str2num(tline(pt1(1)+4:pt2(1)-1));
+      sa1(1,1) = sa1(1,2);       sa1(1,2) = ss1;  
+      sa2(1,1) = sa2(1,2);       sa2(1,2) = ss2;  
+      sa3(1,1) = sa3(1,2);       sa3(1,2) = ss3;          
+      
+      
+   if alls1 < 74
+       set(lable_left,'Background',[0 1 0.0]);  
+        set(lable_right,'Background',[0 0 0.0]); 
+       xl = 1 ; 
+   elseif alls1 > 75 & alls1 < 83
+       set(lable_left,'Background',[0 0 0.0]);  
+       set(lable_right,'Background',[0 0 0.0]);  
+        xl = 0 ; 
+   elseif alls1 > 84
+       set(lable_right,'Background',[0 1 0.0]); 
+       set(lable_left,'Background',[0 0 0.0]); 
+       xl = 2 ; 
+   end
+       
+   if alls2 < 74
+       set(lable_down,'Background',[0 1 0.0]); 
+       set(lable_up,'Background',[0 0 0.0]);  
+       yl = 1 ; 
+   elseif alls2 > 75 & alls2 < 85
+       set(lable_up,'Background',[0 0 0.0]);  
+       set(lable_down,'Background',[0 0 0.0]);  
+        yl = 0;
+   elseif alls2 > 86
+       set(lable_up,'Background',[0 1 0.0]);  
+        set(lable_down,'Background',[0 0 0.0]);  
+       yl = 2 ;
+   end
+   
+   if ss1==1
+      set( lable_sw1,'Background',[0 1 0.0]);  
+   else
+       set( lable_sw1,'Background',[0 0 0.0]);
+   end
+
+   if ss2==1
+      set( lable_sw2,'Background',[0 1 0.0]);  
+   else
+       set( lable_sw2,'Background',[0 0 0.0]);
+   end
+
+   if ss3==1
+      set( lable_sw3,'Background',[0 1 0.0]);  
+      selflage1=0;
+      a=vrnode(myw,'id1');   a=a.children;   a1=a.appearance;  a2=a1.material;     a2.diffuseColor=[0.2 0.2 0.2];
+      a=vrnode(myw,'id2');   a=a.children;   a1=a.appearance;  a2=a1.material;     a2.diffuseColor=[0.2 0.2 0.2];
+      a=vrnode(myw,'id3');   a=a.children;   a1=a.appearance;  a2=a1.material;     a2.diffuseColor=[0.2 0.2 0.2];
+
+   else
+       set( lable_sw3,'Background',[0 0 0.0]);
+   end
+
+   %-----------------------------
+   if sa1(1,1)== 0 && sa1(1,2)== 1
+            if flage1==0
+              lightv.on=1; 
+              c2.emissiveColor=[1 1 1];            
+                      
+            flage1 = 1 ;
+            else
+                lightv.on=0;  
+                c2.emissiveColor=[0 0 0];
+                    
+            flage1 = 0 ;  
+            end
+   end
+   
+   %-
+     
+    if selflage1==1
+         w11=fa.rotation;
+                if xl==1
+                     fa.rotation=[-1 w11(2) w11(3) w11(4)+xlcnt1 ];
+                     xlcnt1 = xlcnt1 + 0.1;
+                     xlcnt2 = 0.1;
+                elseif xl==2
+                    fa.rotation=[-1 w11(2) w11(3) w11(4)-xlcnt2];
+                    xlcnt2 = xlcnt2 + 0.1;
+                    xlcnt1 = 0.1;
+                end
+           w11=fa.rotation;       
+                if yl==1
+                     fa.rotation=[w11(1)  1  w11(3) w11(4)+ylcnt1 ];
+                     ylcnt1 = ylcnt1 + 0.1;
+                     ylcnt2 = 0.1;
+                         
+                elseif yl==2
+                      fa.rotation=[w11(1)  1  w11(3) w11(4)-ylcnt2 ];
+                     ylcnt2 = ylcnt2 + 0.1;
+                     ylcnt1 = 0.1;
+                end
+    end
+    
+      if selflage1==2
+         w11=fa.rotation;
+                if xl==1
+                     fa.rotation=[ w11(1)  w11(2) 1 w11(4)+xlcnt1 ];
+                     xlcnt1 = xlcnt1 + 0.1;
+                     xlcnt2 = 0.1;
+                elseif xl==2
+                     fa.rotation=[ w11(1)  w11(2) 1 w11(4)-xlcnt2];
+                    xlcnt2 = xlcnt2 + 0.1;
+                    xlcnt1 = 0.1;
+                end
+      end
+     
+          if selflage1==3
+         w11=sa.rotation;
+                if xl==1
+                     sa.rotation=[-1 w11(2) w11(3) w11(4)+xlcnt1 ];
+                     xlcnt1 = xlcnt1 + 0.1;
+                     xlcnt2 = 0.1;
+                elseif xl==2
+                    sa.rotation=[-1 w11(2) w11(3) w11(4)-xlcnt2];
+                    xlcnt2 = xlcnt2 + 0.1;
+                    xlcnt1 = 0.1;
+                end
+           w11=sa.rotation;       
+                if yl==1
+                     sa.rotation=[w11(1)  1  w11(3) w11(4)+ylcnt1 ];
+                     ylcnt1 = ylcnt1 + 0.1;
+                     ylcnt2 = 0.1;
+                         
+                elseif yl==2
+                      sa.rotation=[w11(1)  1  w11(3) w11(4)-ylcnt2 ];
+                     ylcnt2 = ylcnt2 + 0.1;
+                     ylcnt1 = 0.1;
+                end
+    end
+    
+      if selflage1==4
+         w11=sa.rotation;
+                if xl==1
+                     sa.rotation=[ w11(1)  w11(2) 1 w11(4)+xlcnt1 ];
+                     xlcnt1 = xlcnt1 + 0.1;
+                     xlcnt2 = 0.1;
+                elseif xl==2
+                     sa.rotation=[ w11(1)  w11(2) 1 w11(4)-xlcnt2];
+                    xlcnt2 = xlcnt2 + 0.1;
+                    xlcnt1 = 0.1;
+                end
+      end
+     
+        if selflage1==5
+         w11=ls.rotation;
+                if xl==1
+                     ls.rotation=[-1 w11(2) w11(3) w11(4)+xlcnt1 ];
+                     xlcnt1 = xlcnt1 + 0.1;
+                     xlcnt2 = 0.1;
+                elseif xl==2
+                    ls.rotation=[-1 w11(2) w11(3) w11(4)-xlcnt2];
+                    xlcnt2 = xlcnt2 + 0.1;
+                    xlcnt1 = 0.1;
+                end
+           w11=ls.rotation;       
+                if yl==1
+                     ls.rotation=[w11(1)  1  w11(3) w11(4)+ylcnt1 ];
+                     ylcnt1 = ylcnt1 + 0.1;
+                     ylcnt2 = 0.1;
+                         
+                elseif yl==2
+                      ls.rotation=[w11(1)  1  w11(3) w11(4)-ylcnt2 ];
+                     ylcnt2 = ylcnt2 + 0.1;
+                     ylcnt1 = 0.1;
+                end
+    end
+    
+      if selflage1==6
+         w11=ls.rotation;
+                if xl==1
+                     ls.rotation=[ w11(1)  w11(2) 1 w11(4)+xlcnt1 ];
+                     xlcnt1 = xlcnt1 + 0.1;
+                     xlcnt2 = 0.1;
+                elseif xl==2
+                     ls.rotation=[ w11(1)  w11(2) 1 w11(4)-xlcnt2];
+                    xlcnt2 = xlcnt2 + 0.1;
+                    xlcnt1 = 0.1;
+                end
+      end
+                %-
+                
+        if sa2(1,1)== 0 && sa2(1,2)== 1
+            if selflage1==0
+               xlcnt1 = 0.1;                xlcnt2 = 0.1;
+               ylcnt1 = 0.1;                ylcnt2 = 0.1;
+              selflage1=1
+                a=vrnode(myw,'id1');
+                a=a.children;
+                a1=a.appearance;
+                a2=a1.material;
+                a2.diffuseColor=[0.9 0.0 0.0];
+
+                a=vrnode(myw,'id2');
+                a=a.children;
+                a1=a.appearance;
+                a2=a1.material;
+                a2.diffuseColor=[0.2 0.2 0.2];
+
+                a=vrnode(myw,'id3');
+                a=a.children;
+                a1=a.appearance;
+                a2=a1.material;
+                a2.diffuseColor=[0.2 0.2 0.2];
+
+                
+            elseif selflage1==1
+              selflage1=2
+               xlcnt1 = 0.1;                xlcnt2 = 0.1;
+               ylcnt1 = 0.1;                ylcnt2 = 0.1;
+                 a=vrnode(myw,'id1');
+                a=a.children;
+                a1=a.appearance;
+                a2=a1.material;
+                a2.diffuseColor=[0.0 0.9 0.0];
+
+                a=vrnode(myw,'id2');
+                a=a.children;
+                a1=a.appearance;
+                a2=a1.material;
+                a2.diffuseColor=[0.2 0.2 0.2];
+
+                a=vrnode(myw,'id3');
+                a=a.children;
+                a1=a.appearance;
+                a2=a1.material;
+                a2.diffuseColor=[0.2 0.2 0.2];
+                
+            elseif selflage1==2
+              selflage1=3
+                xlcnt1 = 0.1;               xlcnt2 = 0.1;
+               ylcnt1 = 0.1;                ylcnt2 = 0.1;
+                a=vrnode(myw,'id1');
+                a=a.children;
+                a1=a.appearance;
+                a2=a1.material;
+                a2.diffuseColor=[0.2 0.2 0.2];
+
+                a=vrnode(myw,'id2');
+                a=a.children;
+                a1=a.appearance;
+                a2=a1.material;
+                a2.diffuseColor=[0.9 0.0 0.0];
+
+                a=vrnode(myw,'id3');
+                a=a.children;
+                a1=a.appearance;
+                a2=a1.material;
+                a2.diffuseColor=[0.2 0.2 0.2];
+            elseif selflage1==3
+              selflage1=4
+               xlcnt1 = 0.1;                xlcnt2 = 0.1;
+               ylcnt1 = 0.1;                ylcnt2 = 0.1;
+                a=vrnode(myw,'id1');
+                a=a.children;
+                a1=a.appearance;
+                a2=a1.material;
+                a2.diffuseColor=[0.2 0.2 0.2];
+
+                a=vrnode(myw,'id2');
+                a=a.children;
+                a1=a.appearance;
+                a2=a1.material;
+                a2.diffuseColor=[0.0 0.9 0.0];
+
+                a=vrnode(myw,'id3');
+                a=a.children;
+                a1=a.appearance;
+                a2=a1.material;
+                a2.diffuseColor=[0.2 0.2 0.2];
+            elseif selflage1==4
+              selflage1=5
+               xlcnt1 = 0.1;                xlcnt2 = 0.1;
+               ylcnt1 = 0.1;                ylcnt2 = 0.1;
+              a=vrnode(myw,'id1');
+                a=a.children;
+                a1=a.appearance;
+                a2=a1.material;
+                a2.diffuseColor=[0.2 0.2 0.2];
+
+                a=vrnode(myw,'id2');
+                a=a.children;
+                a1=a.appearance;
+                a2=a1.material;
+                a2.diffuseColor=[0.2 0.2 0.2];
+
+                a=vrnode(myw,'id3');
+                a=a.children;
+                a1=a.appearance;
+                a2=a1.material;
+                a2.diffuseColor=[0.9 0.0 0.0];
+              elseif selflage1==5
+              selflage1=6
+                xlcnt1 = 0.1;                xlcnt2 = 0.1;
+                ylcnt1 = 0.1;                ylcnt2 = 0.1;
+                 a=vrnode(myw,'id1');
+                a=a.children;
+                a1=a.appearance;
+                a2=a1.material;
+                a2.diffuseColor=[0.2 0.2 0.2];
+
+                a=vrnode(myw,'id2');
+                a=a.children;
+                a1=a.appearance;
+                a2=a1.material;
+                a2.diffuseColor=[0.2 0.2 0.2];
+
+                a=vrnode(myw,'id3');
+                a=a.children;
+                a1=a.appearance;
+                a2=a1.material;
+                a2.diffuseColor=[0.0 0.9 0.0];
+             
+            elseif selflage1==6
+                
+              selflage1=0
+                xlcnt1 = 0.1;                xlcnt2 = 0.1;
+                ylcnt1 = 0.1;                ylcnt2 = 0.1;
+                a=vrnode(myw,'id1');
+                a=a.children;
+                a1=a.appearance;
+                a2=a1.material;
+                a2.diffuseColor=[0.2 0.2 0.2];
+
+                a=vrnode(myw,'id2');
+                a=a.children;
+                a1=a.appearance;
+                a2=a1.material;
+                a2.diffuseColor=[0.2 0.2 0.2];
+
+                a=vrnode(myw,'id3');
+                a=a.children;
+                a1=a.appearance;
+                a2=a1.material;
+                a2.diffuseColor=[0.2 0.2 0.2];
+
+            end
+        end
+        
+        %-------------------------------------
+   
+    end
+   % vrdrawnow
+    pause(0.0001)
+    clear pt1 pt2 alls1 alls2 alls3 ss1 ss2 ss3   a a1 a2 
+    end
+    
+    if co==0    
+        pause(0.0001)
+    end
+    
+    end
+    
+    
+%%  my_closereq
+    function my_closereq(hObject,eventdata)
+        
+        KEY_IS_PRESSED = 1;
+       
+        delete(instrfindall);
+        delete(gcf);
+        clear all;
+        
+    end 
+
+end
